@@ -36,6 +36,25 @@ class UsersGateway {
         }
     }
 
+    static async addUserAndGiveID(username, password) {
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+            .input('username', sql.NVarChar, username)
+            .input('password', sql.NVarChar, password)
+            .output('id', sql.Int)
+            .execute('training_procedure');
+            sql.close();
+            console.log(result.output.id);
+            return true;
+        } catch(err) {
+            console.log(err);
+            console.log('couldnt register new user');
+            sql.close();
+            return false;
+        }
+    }
+
     static async updatePassword(id, newPassword) {
         try {
             let pool = await sql.connect(config);
@@ -44,23 +63,30 @@ class UsersGateway {
             .input('id', sql.Int, id)
             .query('update Users set password=@password where id=@id');
             sql.close();
+            return true;
         } catch(err) {
             console.log(err);
             sql.close();
+            return false;
         }
     }
 
     static async updateReps(id, pullups, pushups, squats) {
         try{
             let pool = await sql.connect(config);
-            await pool.request()
+            let result = await pool.request()
             .input('id', sql.Int, id)
             .input('pullups', sql.Int, pullups)
             .input('pushups', sql.Int, pushups)
             .input('squats', sql.Int, squats)
             .query('update Users set pullups=@pullups, pushups=@pushups, squats=@squats where id=@id');
+            sql.close();
+            console.log(result)
+            return true;
         } catch(err) {
             console.log(err);
+            sql.close();
+            return false;
         }
     }
 }

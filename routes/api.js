@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var UsersGateway = require('../database/UsersGateway');
+var TrainingGateway = require('../database/TrainingGateway');
+var ChestGateway = require('../database/ChestGateway');
+var BackGateway = require('../database/BackGateway');
+var LegsGateway = require('../database/LegsGateway');
 
 
 // GET
@@ -12,16 +16,19 @@ router.get('/', function(req, res) {
 
 router.get('/users', function(req, res) {
     console.log('GET /users request');
-    UsersGateway.getUsers().then(result => {
+    UsersGateway.UsersGateway.getUsers().then(result => {
         //console.log(result.recordset);
         res.send(result.recordset);
     });
 });
 
-router.get('/profile', function(req, res) {
-    console.log('Get /profile request');
-    UsersGateway.UsersGateway.getProfile()
-})
+router.get('/chest', function(req, res) {
+    console.log('GET /chest request');
+    ChestGateway.ChestGatewat.getChest()
+    .then(result => {
+        res.send(result.recordset);
+    })
+});
 
 
 // POST
@@ -61,20 +68,72 @@ router.post('/register', function(req, res) {
     //res.send(success);
 });
 
+// router.post('/register2', function(req, res) {
+//     console.log('POST /register request');
+//     console.log(req.body);
+//     const username = req.body.username;
+//     const password = req.body.password;
+//     console.log(username + '&' + password + ' attempt to register');
+//     UsersGateway.UsersGateway.addUserAndGiveID(username, password)
+//     .then(result => {
+//         console.log(result);
+//         res.send(result);
+//     })
+//     //console.log(success);
+//     //res.send(success);
+// });
+
 router.post('/updatePassword', function(req, res) {
     console.log('POST /updatePassword request');
     const id = req.body.id;
     const password = req.body.password;
-    UsersGateway.UsersGateway.updatePassword(id, password);
+    UsersGateway.UsersGateway.updatePassword(id, password).then(result => {
+        res.send(result);
+    })
 });
 
 router.post('/updateReps', function(req, res) {
-    console.log('POST /updatePassword request');
+    console.log('POST /updateReps request');
     const id = req.body.id;
     const pullups = req.body.pullups;
     const pushups = req.body.pushups;
     const squats = req.body.squats;
-    UsersGateway.UsersGateway.updateReps(id, pullups, pushups, squats);
+    UsersGateway.UsersGateway.updateReps(id, pullups, pushups, squats).then(result => {
+        res.send(result);
+    })
 });
+
+router.post('/trainings', function(req, res) {
+    console.log('POST /trainings request');
+    const user_id = req.body.user_id;
+    TrainingGateway.TrainingGateway.getTrainingIDsByUserID(user_id).then(result => {
+        res.send(result.recordset);
+    })
+});
+
+router.post('/chest', function(req, res) {
+    console.log('POST /chest request');
+    const training_id = req.body.training_id;
+    ChestGateway.ChestGateway.getChestByTrainingID(training_id).then(result => {
+        res.send(result.recordset);
+    })
+});
+
+router.post('/back', function(req, res) {
+    console.log('POST /back request');
+    const training_id = req.body.training_id;
+    BackGateway.BackGateway.getBackByTrainingID(training_id).then(result => {
+        res.send(result.recordset);
+    })
+});
+
+router.post('/legs', function(req, res) {
+    console.log('POST /legs request');
+    const training_id = req.body.training_id;
+    LegsGateway.LegsGateway.getLegsByTrainingID(training_id).then(result => {
+        res.send(result.recordset);
+    })
+});
+
 
 module.exports = router;
