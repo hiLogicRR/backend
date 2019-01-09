@@ -21,6 +21,25 @@ class TrainingGateway {
             return null;
         }
     }
+
+    static async insertTraining(user_id, name) {
+        console.log(name);
+        try {    
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+            .input('user_id', sql.Int, user_id)
+            .input('name', sql.NVarChar, name)
+            .output('id', sql.Int)
+            .execute('training_procedure');
+            sql.close();
+            console.log(result.output.id);
+            return result.output.id;
+        } catch (err) {
+            console.log(err);
+            sql.close();
+            return null;
+        }
+    }
 }
 
 module.exports = {

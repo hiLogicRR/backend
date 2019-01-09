@@ -135,5 +135,41 @@ router.post('/legs', function(req, res) {
     })
 });
 
+router.post('/addtraining', function(req, res) {
+    console.log('POST /addtraining request');
+    const user_id = req.body.user_id;
+    const name = req.body.name;
+    TrainingGateway.TrainingGateway.insertTraining(user_id, name).then(result => {
+        res.send(result.toString());
+    })
+});
+
+router.post('/updatetraining', function(req, res) {
+    console.log('POST /updatetraining request');
+    req.body.training.map((ex) => {
+        console.log(ex);
+        const muscle = ex['muscle'];
+        if(muscle == 'chest') {
+            ChestGateway.ChestGateway.insertChest(req.body.training_id, ex).then(result => {
+                console.log('chest updated');
+                res.send(result);
+            })
+        }
+        if(muscle == 'back') {
+            BackGateway.BackGateway.insertBack(req.body.training_id, ex).then(result => {
+                console.log('back updated');
+                res.send(result);
+            })
+        }
+        if(muscle == 'legs') {
+            LegsGateway.LegsGateway.insertLegs(req.body.training_id, ex).then(result => {
+                console.log('legs updated');
+                res.send(result);
+            })
+        }
+    });
+    
+})
+
 
 module.exports = router;

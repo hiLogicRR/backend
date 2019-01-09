@@ -22,6 +22,25 @@ class LegsGateway {
             return null;
         }
     }
+
+    static async insertLegs(training_id, training) {
+        try {
+            let pool = await sql.connect(config);
+            let result = await pool.request()
+            .input('training_id', sql.Int, training_id)
+            .input('exercise', sql.NVarChar, training['exercise'])
+            .input('reps', sql.Int, training['reps'])
+            .input('sets', sql.Int, training['sets'])
+            .input('type', sql.Int, training['type'])
+            .query('insert into Legs(training_id, exercise, reps, sets, type) values(@training_id, @exercise, @reps, @sets, @type)');
+            sql.close();
+            return true;
+        } catch (err) {
+            console.log(err);
+            sql.close();
+            return false;
+        }
+    }
 }
 
 module.exports = {
